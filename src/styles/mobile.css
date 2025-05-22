@@ -1,0 +1,210 @@
+/* Mobile-specific styles for Toiral Web */
+
+/* Base mobile styles */
+@media (max-width: 768px) {
+  /* General adjustments */
+  body {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Improve tap targets */
+  button,
+  a,
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Adjust font sizes for better readability */
+  body {
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+  }
+
+  /* Windows 95 Desktop adjustments */
+  .desktop-icons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 8px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Ensure the icons container wraps properly */
+  .desktop-icons > div {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  /* Dialog window adjustments */
+  .dialog-window {
+    width: 90vw !important;
+    max-height: 80vh !important;
+    left: 5vw !important;
+    top: 10vh !important;
+  }
+
+  /* Taskbar adjustments */
+  .taskbar {
+    height: 56px;
+    padding: 4px;
+  }
+
+  .taskbar-button {
+    padding: 8px;
+  }
+
+  /* Start menu adjustments */
+  .start-menu {
+    width: 80vw;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .start-menu-item {
+    padding: 12px 8px;
+  }
+
+  /* Form controls */
+  input, select, textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    padding: 12px 8px;
+  }
+
+  /* Improve scrolling */
+  .scrollable-content {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Adjust spacing */
+  .section-container {
+    padding: 16px 12px;
+  }
+
+  /* Adjust grid layouts */
+  .grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* Make tables responsive */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Adjust pricing cards */
+  .pricing-card {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  /* Adjust portfolio items */
+  .portfolio-item {
+    width: 100%;
+  }
+
+  /* Adjust contact form */
+  .contact-form {
+    padding: 16px;
+  }
+
+  /* Adjust appointment booking */
+  .booking-form {
+    padding: 16px;
+  }
+
+  /* Adjust reviews */
+  .review-card {
+    width: 100%;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  /* Further adjustments for very small screens */
+  .dialog-title {
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .dialog-content {
+    padding: 10px;
+  }
+
+  /* Adjust icon sizes */
+  .desktop-icon img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .desktop-icon-label {
+    font-size: 12px;
+  }
+
+  /* Ensure icons wrap properly on very small screens */
+  .desktop-icons > div {
+    gap: 1px !important;
+  }
+
+  /* Stack buttons in forms */
+  .form-buttons {
+    flex-direction: column;
+  }
+
+  .form-buttons button {
+    margin: 4px 0;
+    width: 100%;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 480px) and (orientation: landscape) {
+  .dialog-window {
+    max-height: 90vh !important;
+    top: 5vh !important;
+  }
+
+  .start-menu {
+    max-height: 80vh;
+  }
+
+  /* Adjust desktop icons in landscape */
+  .desktop-icons {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  .clickable-element {
+    padding: 12px;
+  }
+
+  /* Disable hover effects that might cause issues on touch devices */
+  .hover-effect:hover {
+    transform: none;
+  }
+
+  /* Add active state for touch feedback */
+  .touch-feedback:active {
+    opacity: 0.7;
+  }
+}

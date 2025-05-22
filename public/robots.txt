@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /login/
+Disallow: /not-found/
+Disallow: /reset-theme/
+Disallow: /add-pricing/
+Disallow: /test-ads/
+Disallow: /team-members/
+Disallow: /notifications/
+
+Sitemap: https://toiral-development.web.app/sitemap.xml

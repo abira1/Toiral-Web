@@ -1,0 +1,59 @@
+{
+  "name": "Toiral Web",
+  "short_name": "Toiral",
+  "description": "Toiral Web Development - Creating Tomorrow's Web, Today",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#c0c0c0",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/25dSWsHF/Profile_picture__11_-removebg-preview.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.postimg.cc/25dSWsHF/Profile_picture__11_-removebg-preview.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.postimg.cc/25dSWsHF/Profile_picture__11_-removebg-preview.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Contact Us",
+      "short_name": "Contact",
+      "description": "Contact Toiral Web Development",
+      "url": "/?dialog=contact",
+      "icons": [{ "src": "https://i.postimg.cc/RCb0yzn0/Contact.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Book Appointment",
+      "short_name": "Book",
+      "description": "Book an appointment with Toiral",
+      "url": "/?dialog=book",
+      "icons": [{ "src": "https://i.postimg.cc/W3N3LNnd/Appoinment.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshots/mobile.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+}

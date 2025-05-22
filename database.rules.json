@@ -1,0 +1,619 @@
+{
+  "rules": {
+    // Default rules - restrict access by default
+    ".read": false,
+    ".write": false,
+
+    // Permission system - defines available permissions and role mappings
+    "permissions": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'",
+
+      // Permission definitions
+      "roles": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'",
+
+        "user": {
+          ".validate": true,
+          "canReadPublicContent": { ".validate": true },
+          "canSubmitReviews": { ".validate": true },
+          "canCreateBookings": { ".validate": true },
+          "canManageOwnProfile": { ".validate": true },
+          "canParticipateInCommunity": { ".validate": true }
+        },
+        "moderator": {
+          ".validate": true,
+          "canReadPublicContent": { ".validate": true },
+          "canSubmitReviews": { ".validate": true },
+          "canCreateBookings": { ".validate": true },
+          "canManageOwnProfile": { ".validate": true },
+          "canParticipateInCommunity": { ".validate": true },
+          "canModerateContent": { ".validate": true },
+          "canManageBookings": { ".validate": true },
+          "canAccessAdminPanel": { ".validate": true },
+          "canViewAnalytics": { ".validate": true },
+          "canManagePortfolio": { ".validate": true },
+          "canManageServices": { ".validate": true },
+          "canManagePricing": { ".validate": true },
+          "canManageCommunity": { ".validate": true }
+        },
+        "admin": {
+          ".validate": true,
+          "canReadPublicContent": { ".validate": true },
+          "canSubmitReviews": { ".validate": true },
+          "canCreateBookings": { ".validate": true },
+          "canManageOwnProfile": { ".validate": true },
+          "canParticipateInCommunity": { ".validate": true },
+          "canModerateContent": { ".validate": true },
+          "canManageBookings": { ".validate": true },
+          "canAccessAdminPanel": { ".validate": true },
+          "canViewAnalytics": { ".validate": true },
+          "canManagePortfolio": { ".validate": true },
+          "canManageServices": { ".validate": true },
+          "canManagePricing": { ".validate": true },
+          "canManageCommunity": { ".validate": true },
+          "canManageUsers": { ".validate": true },
+          "canManageRoles": { ".validate": true },
+          "canManageSecurity": { ".validate": true },
+          "canManageSEO": { ".validate": true },
+          "canManageSystem": { ".validate": true },
+          "canBypassRateLimits": { ".validate": true }
+        }
+      }
+    },
+
+    // Rate limiting system
+    "rateLimits": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && auth.uid === $uid",
+
+        "writes": {
+          "count": {
+            ".validate": "(!data.exists() && newData.val() === 1) || (newData.val() === data.val() + 1 && data.parent().child('timestamp').val() > (now - 86400000))"
+          },
+          "timestamp": {
+            ".validate": "newData.val() === now"
+          },
+          "lastOperation": {
+            ".validate": "newData.val() === now"
+          }
+        }
+      }
+    },
+
+    // Security monitoring
+    "securityLogs": {
+      ".read": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "auth != null",
+      "loginAttempts": {
+        "$timestamp": {
+          ".validate": "newData.hasChildren(['ip', 'email', 'success'])",
+          "ip": {
+            ".validate": "newData.isString()"
+          },
+          "email": {
+            ".validate": "newData.isString()"
+          },
+          "success": {
+            ".validate": "newData.isBoolean()"
+          },
+          "userAgent": {
+            ".validate": "newData.isString()"
+          }
+        }
+      },
+      "suspiciousActivity": {
+        "$timestamp": {
+          ".validate": "newData.hasChildren(['ip', 'action', 'userId'])",
+          "ip": {
+            ".validate": "newData.isString()"
+          },
+          "action": {
+            ".validate": "newData.isString()"
+          },
+          "userId": {
+            ".validate": "newData.isString()"
+          },
+          "details": {
+            ".validate": "newData.isString()"
+          }
+        }
+      }
+    },
+
+    // Public data with controlled access
+    "portfolio": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManagePortfolio').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+      ".indexOn": ["order", "category", "createdAt"],
+      "$itemId": {
+        ".validate": "newData.hasChildren(['title', 'description', 'imageUrl'])",
+        "title": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "description": {
+          ".validate": "newData.isString() && newData.val().length <= 2000"
+        },
+        "imageUrl": {
+          ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\/.*/)"
+        },
+        "order": {
+          ".validate": "newData.isNumber()"
+        },
+        "category": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "updatedAt": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    "reviews": {
+      ".read": true,
+      ".write": "auth != null && (!root.child('rateLimits').child(auth.uid).exists() || !root.child('rateLimits').child(auth.uid).child('writes').child('count').exists() || root.child('rateLimits').child(auth.uid).child('writes').child('count').val() < 10 || root.child('profile').child(auth.uid).child('permissions').child('canBypassRateLimits').val() === true)",
+      ".indexOn": ["timestamp", "rating", "approved"],
+      "$reviewId": {
+        ".validate": "newData.hasChildren(['id', 'name', 'rating', 'text', 'timestamp'])",
+        "id": {
+          ".validate": "newData.isString() && newData.val() === $reviewId"
+        },
+        "name": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "rating": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 5"
+        },
+        "text": {
+          ".validate": "newData.isString() && newData.val().length <= 2000"
+        },
+        "timestamp": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "approved": {
+          ".validate": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+        },
+        "userId": {
+          ".validate": "auth != null && newData.val() === auth.uid"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    // Company information
+    "company": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+      "name": {
+        ".validate": "newData.isString() && newData.val().length <= 100"
+      },
+      "description": {
+        ".validate": "newData.isString() && newData.val().length <= 5000"
+      },
+      "logo": {
+        ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\/.*/)"
+      },
+      "contact": {
+        "email": {
+          ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/)"
+        },
+        "phone": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\+?[0-9\\s-()]{10,20}$/)"
+        },
+        "address": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        }
+      },
+      "social": {
+        "$platform": {
+          ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\/.*/)"
+        }
+      },
+      "$other": {
+        ".validate": false
+      }
+    },
+
+    // User profiles with enhanced security
+    "profile": {
+      ".read": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageUsers').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+      ".write": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'",
+      ".indexOn": ["email", "role", "createdAt"],
+
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('profile').child(auth.uid).child('permissions').child('canManageUsers').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && (auth.uid === $uid || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/)"
+        },
+        "photoURL": {
+          ".validate": "newData.isString() && newData.val().matches(/^https:\\/\\/.*/)"
+        },
+        "role": {
+          ".validate": "auth != null && (newData.val() === 'user' || (newData.val() === 'moderator' && root.child('profile').child(auth.uid).child('role').val() === 'admin') || (newData.val() === 'admin' && root.child('profile').child(auth.uid).child('role').val() === 'admin'))"
+        },
+        "permissions": {
+          "$permission": {
+            ".validate": "newData.isBoolean()"
+          }
+        },
+        "createdAt": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "lastLogin": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    // Sensitive user data with encryption requirements
+    "sensitiveUserData": {
+      ".read": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'",
+      ".write": false,
+
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+
+        "paymentInfo": {
+          ".validate": "newData.hasChild('encrypted') && newData.child('encrypted').isBoolean() && newData.child('encrypted').val() === true"
+        },
+        "personalInfo": {
+          ".validate": "newData.hasChild('encrypted') && newData.child('encrypted').isBoolean() && newData.child('encrypted').val() === true"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    // Bookings with enhanced security and validation
+    "bookings": {
+      ".read": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageBookings').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+      ".write": "auth != null && (!root.child('rateLimits').child(auth.uid).exists() || !root.child('rateLimits').child(auth.uid).child('writes').child('count').exists() || root.child('rateLimits').child(auth.uid).child('writes').child('count').val() < 5 || root.child('profile').child(auth.uid).child('permissions').child('canBypassRateLimits').val() === true)",
+      ".indexOn": ["status", "date", "userId", "createdAt"],
+
+      "$bookingId": {
+        ".read": "auth != null && (data.child('userId').val() === auth.uid || root.child('profile').child(auth.uid).child('permissions').child('canManageBookings').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+        ".validate": "newData.hasChildren(['id', 'userId', 'serviceType', 'date', 'status', 'createdAt'])",
+
+        "id": {
+          ".validate": "newData.isString() && newData.val() === $bookingId"
+        },
+        "userId": {
+          ".validate": "auth != null && newData.val() === auth.uid"
+        },
+        "serviceType": {
+          ".validate": "newData.isString()"
+        },
+        "date": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'pending' || newData.val() === 'approved' || newData.val() === 'rejected' || newData.val() === 'completed')",
+          ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageBookings').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+        },
+        "createdAt": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "updatedAt": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "$other": {
+          ".validate": true
+        }
+      }
+    },
+
+    // Contact submissions with security and validation
+    "contactSubmissions": {
+      ".read": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+      ".write": "true",
+      ".indexOn": ["status", "createdAt"],
+
+      "$submissionId": {
+        ".validate": "newData.hasChildren(['name', 'email', 'message', 'createdAt'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/)"
+        },
+        "message": {
+          ".validate": "newData.isString() && newData.val().length <= 5000"
+        },
+        "createdAt": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'new' || newData.val() === 'read' || newData.val() === 'replied' || newData.val() === 'archived')",
+          ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    // Chat messages with security
+    "chatMessages": {
+      ".read": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+      ".write": "auth != null",
+      ".indexOn": ["timestamp", "status"],
+
+      "$messageId": {
+        ".read": "auth != null && (data.child('userId').val() === auth.uid || root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+        ".validate": "newData.hasChildren(['userId', 'message', 'timestamp'])",
+
+        "userId": {
+          ".validate": "auth != null && newData.val() === auth.uid"
+        },
+        "message": {
+          ".validate": "newData.isString() && newData.val().length <= 1000"
+        },
+        "timestamp": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'sent' || newData.val() === 'delivered' || newData.val() === 'read')",
+          ".write": "auth != null && (data.parent().child('userId').val() === auth.uid || root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    // Notifications with security
+    "notifications": {
+      ".read": "auth != null",
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+      ".indexOn": ["timestamp", "read", "userId"],
+
+      "$notificationId": {
+        ".read": "auth != null && (data.child('userId').val() === auth.uid || root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+        ".validate": "newData.hasChildren(['userId', 'type', 'message', 'timestamp', 'read'])",
+
+        "userId": {
+          ".validate": "newData.isString()"
+        },
+        "type": {
+          ".validate": "newData.isString() && (newData.val() === 'system' || newData.val() === 'booking' || newData.val() === 'review' || newData.val() === 'contact')"
+        },
+        "message": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "timestamp": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "read": {
+          ".validate": "newData.isBoolean()",
+          ".write": "auth != null && (data.parent().child('userId').val() === auth.uid || root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    // Admin-only sections with strict access control
+    "security": {
+      ".read": true, // Allow read for initialization, will be restricted in Phase 2
+      ".write": "auth != null && root.child('profile').child(auth.uid).child('permissions').child('canManageSecurity').val() === true",
+
+      "settings": {
+        ".validate": "newData.hasChildren(['lastUpdated'])",
+        "lastUpdated": {
+          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?Z$/)"
+        },
+        "maxLoginAttempts": {
+          ".validate": "newData.isNumber() && newData.val() >= 3 && newData.val() <= 10"
+        },
+        "lockoutDuration": {
+          ".validate": "newData.isNumber() && newData.val() >= 300 && newData.val() <= 86400"
+        },
+        "passwordPolicy": {
+          "minLength": {
+            ".validate": "newData.isNumber() && newData.val() >= 8 && newData.val() <= 32"
+          },
+          "requireUppercase": {
+            ".validate": "newData.isBoolean()"
+          },
+          "requireLowercase": {
+            ".validate": "newData.isBoolean()"
+          },
+          "requireNumbers": {
+            ".validate": "newData.isBoolean()"
+          },
+          "requireSpecialChars": {
+            ".validate": "newData.isBoolean()"
+          }
+        }
+      }
+    },
+
+    // Analytics with access control
+    "analytics": {
+      ".read": true, // Allow read for initialization, will be restricted in Phase 2
+      ".write": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'",
+      ".indexOn": ["date"]
+    },
+
+    // Email marketing settings
+    "emailMarketing": {
+      ".read": true, // Allow read for initialization, will be restricted in Phase 2
+      ".write": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'"
+    },
+
+    // PWA settings
+    "pwaSettings": {
+      ".read": true, // Allow read for initialization, will be restricted in Phase 2
+      ".write": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'"
+    },
+
+    // Social stats
+    "socialStats": {
+      ".read": true, // Allow read for initialization, will be restricted in Phase 2
+      ".write": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'"
+    },
+
+    // SEO settings with access control
+    "seo": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageSEO').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+
+    // Firebase Cloud Messaging tokens
+    "fcmTokens": {
+      ".read": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "auth != null",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    // User tour tracking
+    "seenTours": {
+      ".read": true, // Allow read for initialization, will be restricted in Phase 2
+      ".write": "auth != null",
+      "$uid": {
+        ".read": true, // Allow read for initialization, will be restricted in Phase 2
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    // User login tracking
+    "userLogins": {
+      ".read": "auth != null && root.child('profile').child(auth.uid).child('role').val() === 'admin'",
+      ".write": true, // Allow write for initialization and login recording
+      ".indexOn": ["timestamp", "userId"],
+      "$loginId": {
+        ".validate": "newData.hasChildren(['userId', 'timestamp']) || true", // Relaxed validation for initialization
+        "userId": {
+          ".validate": "newData.isString() || true" // Relaxed validation for initialization
+        },
+        "timestamp": {
+          ".validate": "newData.isString() || true" // Relaxed validation for initialization
+        },
+        "ipAddress": {
+          ".validate": "newData.isString() || true" // Relaxed validation for initialization
+        },
+        "userAgent": {
+          ".validate": "newData.isString() || true" // Relaxed validation for initialization
+        }
+      }
+    },
+
+    // User activity tracking
+    "userActivity": {
+      ".read": "auth != null",
+      ".write": true, // Allow write for initialization and activity recording
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": true // Allow write for initialization and activity recording
+      }
+    },
+
+    // Additional paths with appropriate security
+    "contact": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "contactInfo": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "theme": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "about": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "services": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "pricing": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "ads": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+      "$adId": {
+        "stats": {
+          "impressions": {
+            ".write": true
+          },
+          "clicks": {
+            ".write": true
+          },
+          "closes": {
+            ".write": true
+          }
+        }
+      }
+    },
+    "community": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "availableHours": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "aboutUs": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "testimonialSettings": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "games": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "mobileWelcome": {
+      ".read": true,
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "conversations": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$conversationId": {
+        ".read": "auth != null && (data.child('participants').child(auth.uid).exists() || root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && (data.child('participants').child(auth.uid).exists() || root.child('profile').child(auth.uid).child('permissions').child('canModerateContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+      }
+    },
+    // Toiral main settings
+    "toiral": {
+      ".read": true, // Allow read for initialization, will be restricted in Phase 2
+      ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')",
+      "$section": {
+        ".read": true, // Allow read for initialization, will be restricted in Phase 2
+        ".write": "auth != null && (root.child('profile').child(auth.uid).child('permissions').child('canManageContent').val() === true || root.child('profile').child(auth.uid).child('role').val() === 'admin')"
+      }
+    }
+  }
+}

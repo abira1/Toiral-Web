@@ -1,0 +1,188 @@
+/* High Contrast Theme CSS */
+:root.high-contrast {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --accent-color: #ffff00;
+  --border-color: #ffffff;
+  --button-bg: #000000;
+  --button-text: #ffffff;
+  --button-border: #ffffff;
+  --button-hover-bg: #444444;
+  --window-bg: #000000;
+  --window-title-bg: #000080;
+  --window-title-text: #ffffff;
+  --desktop-bg: #000000;
+  --taskbar-bg: #000000;
+  --menu-bg: #000000;
+  --menu-text: #ffffff;
+  --menu-hover-bg: #0000aa;
+  --menu-hover-text: #ffffff;
+  --input-bg: #000000;
+  --input-text: #ffffff;
+  --input-border: #ffffff;
+  --link-color: #00ffff;
+  --link-hover-color: #ffff00;
+  --error-color: #ff0000;
+  --success-color: #00ff00;
+  --warning-color: #ffff00;
+  --info-color: #00ffff;
+}
+
+/* Apply high contrast styles */
+.high-contrast body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Windows 95 Desktop */
+.high-contrast .w-full.h-screen.flex.flex-col {
+  background-color: var(--desktop-bg);
+}
+
+/* Taskbar */
+.high-contrast .h-12.bg-gray-300.border-t-2.border-white {
+  background-color: var(--taskbar-bg);
+  border-top-color: var(--border-color);
+}
+
+/* Start Button */
+.high-contrast .h-10.flex.items-center.px-2.font-bold {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border-color: var(--button-border);
+}
+
+/* Windows */
+.high-contrast .fixed.bg-gray-300.border-2.border-gray-400 {
+  background-color: var(--window-bg);
+  border-color: var(--border-color);
+}
+
+/* Window Title Bars */
+.high-contrast .bg-blue-900.text-white.px-2.py-1 {
+  background-color: var(--window-title-bg);
+  color: var(--window-title-text);
+}
+
+/* Buttons */
+.high-contrast button,
+.high-contrast .cursor-pointer.bg-gray-300.border-2 {
+  background-color: var(--button-bg) !important;
+  color: var(--button-text) !important;
+  border-color: var(--button-border) !important;
+}
+
+.high-contrast button:hover,
+.high-contrast .cursor-pointer.bg-gray-300.border-2:hover {
+  background-color: var(--button-hover-bg) !important;
+}
+
+/* Inputs */
+.high-contrast input,
+.high-contrast textarea,
+.high-contrast select {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border-color: var(--input-border);
+}
+
+/* Links */
+.high-contrast a {
+  color: var(--link-color);
+}
+
+.high-contrast a:hover {
+  color: var(--link-hover-color);
+}
+
+/* Start Menu */
+.high-contrast .absolute.bg-gray-300.border-2.border-gray-400 {
+  background-color: var(--menu-bg);
+  border-color: var(--border-color);
+}
+
+.high-contrast .absolute.bg-gray-300.border-2.border-gray-400 button {
+  color: var(--menu-text);
+}
+
+.high-contrast .absolute.bg-gray-300.border-2.border-gray-400 button:hover {
+  background-color: var(--menu-hover-bg);
+  color: var(--menu-hover-text);
+}
+
+/* Dialog content */
+.high-contrast .bg-white.border-2.border-gray-400,
+.high-contrast .bg-gray-200.text-black,
+.high-contrast .bg-gray-100.border-2.border-gray-300 {
+  background-color: var(--window-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Tables */
+.high-contrast table,
+.high-contrast th,
+.high-contrast td {
+  border-color: var(--border-color);
+}
+
+.high-contrast th {
+  background-color: var(--window-title-bg);
+  color: var(--window-title-text);
+}
+
+/* Status indicators */
+.high-contrast .bg-green-100.text-green-800 {
+  background-color: var(--success-color) !important;
+  color: var(--bg-color) !important;
+}
+
+.high-contrast .bg-yellow-100.text-yellow-800 {
+  background-color: var(--warning-color) !important;
+  color: var(--bg-color) !important;
+}
+
+.high-contrast .bg-red-100.text-red-800 {
+  background-color: var(--error-color) !important;
+  color: var(--bg-color) !important;
+}
+
+/* Icons */
+.high-contrast svg {
+  color: var(--text-color);
+}
+
+/* Focus indicators */
+.high-contrast *:focus {
+  outline: 2px solid var(--accent-color) !important;
+}
+
+/* Desktop icons */
+.high-contrast .absolute.top-0.left-0.right-0 .flex.flex-col.items-center {
+  background-color: transparent;
+}
+
+.high-contrast .absolute.top-0.left-0.right-0 .flex.flex-col.items-center p {
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+/* Scrollbars */
+.high-contrast ::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+.high-contrast ::-webkit-scrollbar-track {
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+}
+
+.high-contrast ::-webkit-scrollbar-thumb {
+  background-color: var(--button-bg);
+  border: 1px solid var(--border-color);
+}
+
+.high-contrast ::-webkit-scrollbar-corner {
+  background-color: var(--bg-color);
+}
