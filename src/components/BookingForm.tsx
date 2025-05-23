@@ -3,7 +3,7 @@ import { Win95Button } from './Win95Button';
 import { useContent } from '../contexts/ContentContext';
 import { useAuth } from '../contexts/AuthContext';
 import { CalendarIcon, ClockIcon, CheckIcon, LockIcon } from 'lucide-react';
-import { addBooking } from '../firebase/contentDatabase';
+import { addBooking as addFirebaseBooking } from '../firebase/contentDatabase';
 interface BookingFormProps {
   onClose: () => void;
 }
