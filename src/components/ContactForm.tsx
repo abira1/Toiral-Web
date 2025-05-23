@@ -1,28 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Win95Button } from './Win95Button';
 import { useContent } from '../contexts/ContentContext';
+import { useAuth } from '../contexts/AuthContext';
 import { CheckIcon } from 'lucide-react';
-import { addContactSubmission } from '../firebase/contentDatabase';
+import { addContactSubmission as addFirebaseContactSubmission } from '../firebase/contentDatabase';
+import { AuthRequiredWrapper } from './AuthRequiredWrapper';
+import { ProfilePreview } from './ProfilePreview';
+
 export function ContactForm({
   onClose
 }: {
   onClose: () => void;
 }) {
-  const {
-    addContactSubmission
-  } = useContent();
+  const { addContactSubmission } = useContent();
+  const { getUserProfileData } = useAuth();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
     subject: 'General Inquiry',
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get user profile data
+  const profileData = getUserProfileData();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!profileData) {
+      alert('Please sign in to submit a contact form.');
+      return;
+    }
+
     try {
-      // Use Firebase to add the contact submission
-      await addContactSubmission(formData);
+      setIsSubmitting(true);
+
+      // Use Firebase to add the contact submission with authenticated user data
+      const submissionData = {
+        name: profileData.name,
+        email: profileData.email,
+        subject: formData.subject,
+        message: formData.message.trim(),
+        userId: profileData.uid, // Add user ID for tracking
+        userPhotoURL: profileData.photoURL // Add photo URL for admin reference
+      };
+
+      await addContactSubmission(submissionData);
       setSubmitted(true);
       setTimeout(() => {
         onClose();
@@ -30,9 +52,12 @@ export function ContactForm({
     } catch (error) {
       console.error('Error submitting contact form:', error);
       alert('There was an error submitting your message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -55,34 +80,72 @@ export function ContactForm({
         </div>
       </div>;
   }
-  return <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block mb-1 font-mono">Your Name:</label>
-          <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full p-1 font-mono border-2 border-gray-600 bg-white border-t-gray-800 border-l-gray-800" />
-        </div>
-        <div>
-          <label className="block mb-1 font-mono">Email Address:</label>
-          <input type="email" name="email" required value={formData.email} onChange={handleChange} className="w-full p-1 font-mono border-2 border-gray-600 bg-white border-t-gray-800 border-l-gray-800" />
-        </div>
+  // Wrap the form in authentication requirement
+  return (
+    <AuthRequiredWrapper
+      title="Sign In to Contact Us"
+      description="Please sign in with your Google account to send us a message. This helps us respond to you more effectively and prevents spam."
+      icon="contact"
+    >
+      <div className="space-y-4">
+        {/* User Profile Preview */}
+        <ProfilePreview
+          showEmail={true}
+          className="mb-4"
+        />
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Subject Field */}
+          <div>
+            <label className="block mb-1 font-mono">Subject:</label>
+            <select
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
+              className="w-full p-2 font-mono border-2 border-gray-600 bg-white border-t-gray-800 border-l-gray-800"
+              disabled={isSubmitting}
+            >
+              <option>General Inquiry</option>
+              <option>Technical Support</option>
+              <option>Business Proposal</option>
+              <option>Partnership Opportunity</option>
+              <option>Project Quote Request</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          {/* Message Field */}
+          <div>
+            <label className="block mb-1 font-mono">Message:</label>
+            <textarea
+              name="message"
+              rows={6}
+              required
+              value={formData.message}
+              onChange={handleChange}
+              className="w-full p-2 font-mono border-2 border-gray-600 bg-white border-t-gray-800 border-l-gray-800 resize-none"
+              placeholder="Please describe your inquiry or project requirements in detail..."
+              minLength={10}
+              maxLength={1000}
+              disabled={isSubmitting}
+            />
+            <div className="text-xs font-mono text-gray-500 mt-1">
+              {formData.message.length}/1000 characters {formData.message.length < 10 && `(${10 - formData.message.length} more required)`}
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-end pt-2">
+            <Win95Button
+              type="submit"
+              className="px-6 py-2 font-mono font-bold"
+              disabled={!formData.message || formData.message.length < 10 || isSubmitting}
+            >
+              {isSubmitting ? 'Sending...' : 'Send Message'}
+            </Win95Button>
+          </div>
+        </form>
       </div>
-      <div>
-        <label className="block mb-1 font-mono">Subject:</label>
-        <select name="subject" value={formData.subject} onChange={handleChange} className="w-full p-1 font-mono border-2 border-gray-600 bg-white border-t-gray-800 border-l-gray-800">
-          <option>General Inquiry</option>
-          <option>Technical Support</option>
-          <option>Business Proposal</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div>
-        <label className="block mb-1 font-mono">Message:</label>
-        <textarea name="message" rows={6} required value={formData.message} onChange={handleChange} className="w-full p-1 font-mono border-2 border-gray-600 bg-white border-t-gray-800 border-l-gray-800 resize-none" />
-      </div>
-      <div className="flex justify-end">
-        <Win95Button type="submit" className="px-4 py-2 font-mono">
-          Send Message
-        </Win95Button>
-      </div>
-    </form>;
+    </AuthRequiredWrapper>
+  );
 }
