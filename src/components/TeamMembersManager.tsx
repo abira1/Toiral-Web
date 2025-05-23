@@ -7,16 +7,9 @@ import { TeamMember } from '../types';
 export function TeamMembersManager() {
   const { content, updateContent } = useContent();
 
-  // Debug logging
+  // Initialize about section if it doesn't exist
   useEffect(() => {
-    console.log('TeamMembersManager mounted');
-    console.log('About content:', content.about);
-    console.log('Team members:', content.about?.teamMembers);
-
-    // Initialize about section if it doesn't exist
     if (!content.about || !content.about.teamMembers) {
-      console.log('About section or teamMembers is missing, initializing...');
-
       // Create a new team member with a unique ID
       const newMember = {
         id: Date.now().toString(),
@@ -25,8 +18,6 @@ export function TeamMembersManager() {
         image: 'https://via.placeholder.com/200?text=Team+Member'
       };
 
-      console.log('Creating new team member:', newMember);
-
       // Update the content with the new team member
       updateContent({
         about: {
@@ -34,8 +25,6 @@ export function TeamMembersManager() {
           teamMembers: [newMember]
         }
       });
-
-      console.log('Initialization request sent!');
     }
   }, [content.about, updateContent]);
 
@@ -48,11 +37,8 @@ export function TeamMembersManager() {
       image: 'https://via.placeholder.com/200'
     };
 
-    console.log('Adding new team member:', newMember);
-
     // Initialize the about object if it doesn't exist
     if (!content.about) {
-      console.log('About section does not exist, creating it now');
       // Create the about section with the new team member
       updateContent({
         about: {
@@ -60,8 +46,6 @@ export function TeamMembersManager() {
           teamMembers: [newMember]
         }
       });
-
-      console.log('Created new about section with team member:', newMember);
       return;
     }
 
@@ -161,25 +145,7 @@ export function TeamMembersManager() {
         </Win95Button>
       </div>
 
-      {/* Debug information */}
-      <div className="mb-4 p-4 bg-yellow-100 border-2 border-yellow-400 rounded text-sm">
-        <details>
-          <summary className="font-bold cursor-pointer text-red-600">
-            <AlertCircleIcon className="w-4 h-4 inline-block mr-1" />
-            IMPORTANT: Debug Info (Click to expand)
-          </summary>
-          <div className="mt-2 p-2 bg-white rounded border border-gray-300">
-            <p className="mb-2 font-bold">Current Team Members Data:</p>
-            <pre className="overflow-auto max-h-40 p-2 bg-gray-100 rounded">
-              {JSON.stringify(content.about?.teamMembers || [], null, 2)}
-            </pre>
-            <p className="mt-4 mb-2 font-bold">Full About Object:</p>
-            <pre className="overflow-auto max-h-40 p-2 bg-gray-100 rounded">
-              {JSON.stringify(content.about || {}, null, 2)}
-            </pre>
-          </div>
-        </details>
-      </div>
+
 
       {/* Standalone Add Team Member Button */}
       <div className="mb-4">
