@@ -18,7 +18,7 @@ interface StartMenuProps {
   onContactClick: () => void;
   onChatClick: () => void;
   onUserProfileClick: () => void;
-  onPricingClick: () => void;
+  onServicesClick: () => void;
   onGamesClick?: () => void;
   onCommunityClick?: () => void;
   onSignInClick?: () => void;
@@ -32,7 +32,7 @@ export function StartMenu({
   onContactClick,
   onChatClick,
   onUserProfileClick,
-  onPricingClick,
+  onServicesClick,
   onGamesClick,
   onCommunityClick,
   onSignInClick
@@ -85,6 +85,7 @@ export function StartMenu({
       'portfolio': 'https://i.postimg.cc/15k3RcBh/Portfolio.png',
       'book': 'https://i.postimg.cc/W3N3LNnd/Appoinment.png',
       'reviews': 'https://i.postimg.cc/cLf4vgkK/Review.png',
+      'services': 'https://i.postimg.cc/wTC4SC9S/e11d1a19-062b-4b8b-b88a-42e855baa176-removebg-preview.png',
       'pricing': 'https://i.postimg.cc/wTC4SC9S/e11d1a19-062b-4b8b-b88a-42e855baa176-removebg-preview.png',
       'contact': 'https://i.postimg.cc/RCb0yzn0/Contact.png',
       'chat': 'https://i.postimg.cc/7hbZhKjD/Chat.png',
@@ -135,11 +136,11 @@ export function StartMenu({
             }} />
             <span className="font-mono">Reviews</span>
           </div>
-          <div className="flex items-center bg-gray-300 px-4 py-2 cursor-pointer hover:bg-gray-400" onClick={() => handleItemClick(onPricingClick)}>
-            <img src={getIconUrl('pricing')} alt="Pricing" className={getIconSizeClasses()} onError={(e) => {
-              (e.target as HTMLImageElement).src = getPlaceholderIcon('Pricing');
+          <div className="flex items-center bg-gray-300 px-4 py-2 cursor-pointer hover:bg-gray-400" onClick={() => handleItemClick(onServicesClick)}>
+            <img src={getIconUrl('services')} alt="Services" className={getIconSizeClasses()} onError={(e) => {
+              (e.target as HTMLImageElement).src = getPlaceholderIcon('Services');
             }} />
-            <span className="font-mono">Pricing</span>
+            <span className="font-mono">Services</span>
           </div>
           <div className="flex items-center bg-gray-300 px-4 py-2 cursor-pointer hover:bg-gray-400" onClick={() => handleItemClick(onContactClick)}>
             <img src={getIconUrl('contact')} alt="Contact" className={getIconSizeClasses()} onError={(e) => {

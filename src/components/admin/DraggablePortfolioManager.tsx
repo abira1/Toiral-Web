@@ -295,72 +295,152 @@ export function DraggablePortfolioManager() {
 
       <div className="bg-gray-50 p-6 border border-gray-200 rounded-lg shadow-sm">
 
-        {/* List view for portfolio items with drag and drop */}
-        <div className="space-y-2">
+        {/* Enhanced single-column list view for portfolio items with drag and drop */}
+        <div className="space-y-4">
           {portfolioItems.length > 0 ? (
             portfolioItems.map((item, index) => (
               <div
                 key={item.id}
-                className={`bg-white p-4 border border-gray-300 rounded-lg flex items-center mb-3 shadow-sm transition-all duration-200 ${draggedItemId === item.id ? 'opacity-50 bg-blue-50 border-blue-300' : 'hover:border-blue-300'}`}
+                className={`bg-gray-50 border-2 border-gray-400 rounded-lg overflow-hidden transition-all duration-200 ${
+                  draggedItemId === item.id ? 'opacity-50 bg-blue-50 border-blue-300' : 'hover:border-blue-300'
+                }`}
+                style={{
+                  borderStyle: 'outset',
+                  borderWidth: '2px',
+                  boxShadow: 'inset -1px -1px 0px rgba(0,0,0,0.25), inset 1px 1px 0px rgba(255,255,255,0.75)'
+                }}
                 draggable
                 onDragStart={() => handleDragStart(item.id)}
                 onDragOver={(e) => handleDragOver(e, item.id)}
                 onDrop={(e) => handleDrop(e, item.id)}
                 onDragEnd={handleDragEnd}
               >
-                <div className="flex items-center mr-4">
-                  <div className="bg-gray-100 rounded-md p-1 mr-2">
-                    <GripVerticalIcon className="w-5 h-5 cursor-move text-gray-500" />
+                {/* Header with order number and drag handle */}
+                <div className="bg-gray-200 border-b-2 border-gray-400 p-3 flex items-center justify-between">
+                  <div className="flex items-center">
+                    <GripVerticalIcon className="w-5 h-5 mr-3 cursor-move text-gray-500" />
+                    <span className="font-mono font-bold text-lg">Project #{index + 1}</span>
                   </div>
-                  <span className="font-mono text-gray-500 bg-gray-100 w-6 h-6 flex items-center justify-center rounded-full text-sm">{index + 1}</span>
+                  <div className="flex items-center space-x-1">
+                    <Win95Button
+                      onClick={() => moveItemUp(item.id)}
+                      className="p-1"
+                      disabled={index === 0}
+                      title="Move Up"
+                    >
+                      <ArrowUpIcon className="w-4 h-4" />
+                    </Win95Button>
+                    <Win95Button
+                      onClick={() => moveItemDown(item.id)}
+                      className="p-1"
+                      disabled={index === portfolioItems.length - 1}
+                      title="Move Down"
+                    >
+                      <ArrowDownIcon className="w-4 h-4" />
+                    </Win95Button>
+                    <Win95Button
+                      onClick={() => handlePortfolioRemove(item.id)}
+                      className="p-1 text-red-600"
+                      title="Delete Project"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                    </Win95Button>
+                  </div>
                 </div>
-                <div className="w-16 h-16 mr-4 border border-gray-200 rounded-md overflow-hidden shadow-sm">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22300%22%20viewBox%3D%220%200%20300%20300%22%3E%3Crect%20fill%3D%22%23CCCCCC%22%20width%3D%22300%22%20height%3D%22300%22%2F%3E%3Ctext%20fill%3D%22%23333333%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3EProject%20Image%3C%2Ftext%3E%3C%2Fsvg%3E';
-                    }}
-                  />
-                </div>
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    value={item.title}
-                    onChange={e => handlePortfolioUpdate(item.id, 'title', e.target.value)}
-                    className="w-full p-2 mb-2 border border-gray-300 rounded-md bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    placeholder="Project Title"
-                  />
-                  <input
-                    type="text"
-                    value={item.description}
-                    onChange={e => handlePortfolioUpdate(item.id, 'description', e.target.value)}
-                    className="w-full p-2 text-sm border border-gray-300 rounded-md bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    placeholder="Project Description"
-                  />
-                </div>
-                <div className="ml-4 flex space-x-2">
-                  <Win95Button
-                    onClick={() => moveItemUp(item.id)}
-                    className="p-2 bg-gray-50 hover:bg-gray-100"
-                    disabled={index === 0}
-                  >
-                    <ArrowUpIcon className="w-4 h-4" />
-                  </Win95Button>
-                  <Win95Button
-                    onClick={() => moveItemDown(item.id)}
-                    className="p-2 bg-gray-50 hover:bg-gray-100"
-                    disabled={index === portfolioItems.length - 1}
-                  >
-                    <ArrowDownIcon className="w-4 h-4" />
-                  </Win95Button>
-                  <Win95Button
-                    onClick={() => handlePortfolioRemove(item.id)}
-                    className="p-2 bg-red-50 hover:bg-red-100 text-red-600"
-                  >
-                    <TrashIcon className="w-4 h-4" />
-                  </Win95Button>
+
+                {/* Content area with image and form fields */}
+                <div className="p-4">
+                  <div className="flex flex-col lg:flex-row gap-4">
+                    {/* Image preview section */}
+                    <div className="lg:w-1/3">
+                      <div className="aspect-video relative border-2 border-gray-300 rounded overflow-hidden bg-gray-100">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          onError={e => {
+                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22225%22%20viewBox%3D%220%200%20400%20225%22%3E%3Crect%20fill%3D%22%23C0C0C0%22%20width%3D%22400%22%20height%3D%22225%22%20stroke%3D%22%23808080%22%20stroke-width%3D%222%22%2F%3E%3Crect%20fill%3D%22%23FFFFFF%22%20x%3D%2250%22%20y%3D%2250%22%20width%3D%22300%22%20height%3D%22125%22%20stroke%3D%22%23808080%22%20stroke-width%3D%221%22%2F%3E%3Ctext%20fill%3D%22%23000000%22%20font-family%3D%22monospace%22%20font-size%3D%2216%22%20x%3D%22200%22%20y%3D%22100%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3EProject%20Image%3C%2Ftext%3E%3Ctext%20fill%3D%22%23666666%22%20font-family%3D%22monospace%22%20font-size%3D%2212%22%20x%3D%22200%22%20y%3D%22125%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3E16%3A9%20Preview%3C%2Ftext%3E%3C%2Fsvg%3E';
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Form fields section */}
+                    <div className="lg:w-2/3 space-y-3">
+                      <div>
+                        <label className="block font-mono text-sm font-bold mb-1">Project Title</label>
+                        <input
+                          type="text"
+                          value={item.title}
+                          onChange={e => handlePortfolioUpdate(item.id, 'title', e.target.value)}
+                          className="w-full p-2 border-2 border-gray-600 bg-white font-mono"
+                          style={{
+                            borderStyle: 'inset',
+                            borderTopColor: '#808080',
+                            borderLeftColor: '#808080',
+                            borderBottomColor: '#ffffff',
+                            borderRightColor: '#ffffff'
+                          }}
+                          placeholder="Enter project title"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-mono text-sm font-bold mb-1">Project Description</label>
+                        <textarea
+                          value={item.description}
+                          onChange={e => handlePortfolioUpdate(item.id, 'description', e.target.value)}
+                          className="w-full p-2 border-2 border-gray-600 bg-white font-mono resize-none"
+                          style={{
+                            borderStyle: 'inset',
+                            borderTopColor: '#808080',
+                            borderLeftColor: '#808080',
+                            borderBottomColor: '#ffffff',
+                            borderRightColor: '#ffffff'
+                          }}
+                          rows={3}
+                          placeholder="Enter project description"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block font-mono text-sm font-bold mb-1">Image URL</label>
+                          <input
+                            type="url"
+                            value={item.image}
+                            onChange={e => handlePortfolioUpdate(item.id, 'image', e.target.value)}
+                            className="w-full p-2 border-2 border-gray-600 bg-white font-mono"
+                            style={{
+                              borderStyle: 'inset',
+                              borderTopColor: '#808080',
+                              borderLeftColor: '#808080',
+                              borderBottomColor: '#ffffff',
+                              borderRightColor: '#ffffff'
+                            }}
+                            placeholder="https://example.com/image.jpg"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-mono text-sm font-bold mb-1">Project URL</label>
+                          <input
+                            type="url"
+                            value={item.url}
+                            onChange={e => handlePortfolioUpdate(item.id, 'url', e.target.value)}
+                            className="w-full p-2 border-2 border-gray-600 bg-white font-mono"
+                            style={{
+                              borderStyle: 'inset',
+                              borderTopColor: '#808080',
+                              borderLeftColor: '#808080',
+                              borderBottomColor: '#ffffff',
+                              borderRightColor: '#ffffff'
+                            }}
+                            placeholder="https://example.com/project"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))

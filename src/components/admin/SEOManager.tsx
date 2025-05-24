@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Win95Button } from '../Win95Button';
 import { database } from '../../firebase/config';
 import { ref, onValue, set } from 'firebase/database';
@@ -140,7 +140,7 @@ export function SEOManager() {
         keywords: 'web development pricing, website packages, affordable web design, custom website cost',
         ogTitle: 'Affordable Web Development Pricing | Toiral',
         ogDescription: 'Find the perfect web development package for your business. Transparent pricing with no hidden fees and excellent value for your investment.',
-        ogImage: 'https://i.postimg.cc/Kz9zZLJV/dollar-sign.png',
+        ogImage: 'https://i.postimg.cc/wTC4SC9S/e11d1a19-062b-4b8b-b88a-42e855baa176-removebg-preview.png',
         canonicalUrl: 'https://toiral-development.web.app/?section=pricing',
         structuredData: '{"@context":"https://schema.org","@type":"Product","name":"Toiral Web Development Services","description":"Professional web development services with various pricing options","offers":{"@type":"AggregateOffer","priceCurrency":"USD","lowPrice":"500","highPrice":"5000","offerCount":"3"}}'
       },

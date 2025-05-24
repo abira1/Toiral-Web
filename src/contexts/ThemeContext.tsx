@@ -95,9 +95,9 @@ export const defaultSettings: ThemeSettings = {
       visible: true
     },
     {
-      id: 'pricing',
-      label: 'Pricing',
-      icon: 'https://i.postimg.cc/Kz9zZLJV/dollar-sign.png',
+      id: 'services',
+      label: 'Services',
+      icon: 'https://i.postimg.cc/wTC4SC9S/e11d1a19-062b-4b8b-b88a-42e855baa176-removebg-preview.png',
       order: 7,
       visible: true
     },
@@ -152,16 +152,23 @@ export function ThemeProvider({
   const [settings, setSettings] = useState<ThemeSettings>(defaultSettings);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Function to ensure required sections exist in sections
+  // Function to ensure required sections exist in sections and migrate from pricing to services
   const ensureRequiredSections = (sections: any[]) => {
     let updatedSections = [...sections];
+
+    // MIGRATION: Remove any old "pricing" sections
+    const originalLength = updatedSections.length;
+    updatedSections = updatedSections.filter(section => section.id !== 'pricing');
+    if (originalLength !== updatedSections.length) {
+      console.log('🔄 Migrated: Removed pricing section from theme settings');
+    }
 
     // Required sections with their default values
     const requiredSections = [
       {
-        id: 'pricing',
-        label: 'Pricing',
-        icon: 'https://i.postimg.cc/Kz9zZLJV/dollar-sign.png',
+        id: 'services',
+        label: 'Services',
+        icon: 'https://i.postimg.cc/wTC4SC9S/e11d1a19-062b-4b8b-b88a-42e855baa176-removebg-preview.png',
         visible: true
       },
       {

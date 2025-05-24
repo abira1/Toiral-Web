@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AdminPanel } from '../components/AdminPanel';
+import { AdminPanel } from '../components/AdminPanel.tsx';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Win95Button } from '../components/Win95Button';

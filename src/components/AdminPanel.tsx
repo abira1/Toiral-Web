@@ -8,19 +8,20 @@ import { ThemeManagement } from './ThemeManagement';
 import { NotificationManager } from './NotificationManager';
 import { BookingConfirmationDialog } from './BookingConfirmationDialog';
 import { ContactInfoManager } from './ContactInfoManager';
-import { PricingManager } from './PricingManager';
+import { ServicesManager } from './ServicesManager';
 import { AdManagerDashboard } from './admin/AdManager/AdManagerDashboard';
 import { AnalyticsDashboard } from './admin/AnalyticsDashboard';
 import { SEOManager } from './admin/SEOManager';
 import { EmailMarketing } from './admin/EmailMarketing';
 import { TestimonialManager } from './admin/TestimonialManager';
-import { NewTeamMembersManager } from './NewTeamMembersManager';
+import { EnhancedTeamMembersManager } from './admin/EnhancedTeamMembersManager';
 import { ConsoleTeamMembersHelper } from './ConsoleTeamMembersHelper';
 import { GameManager } from './admin/GameManager';
 import { SocialProofManager } from './admin/SocialProofManager';
 import { ForumManager } from './admin/ForumManager';
 import { MobileWelcomeManager } from './admin/MobileWelcomeManager';
 import { ContactSubmissionsManager } from './admin/ContactSubmissionsManager';
+import { BookingManager } from './admin/BookingManager';
 import { NewPortfolioManager } from './admin/NewPortfolioManager';
 import { EmergencyPortfolioManager } from './admin/EmergencyPortfolioManager';
 import { DraggablePortfolioManager } from './admin/DraggablePortfolioManager';
@@ -218,40 +219,7 @@ export function AdminPanel() {
       {/* Console Helper for Team Members Management */}
       <ConsoleTeamMembersHelper />
 
-      {/* COMPLETELY NEW TEAM MEMBERS MANAGER BANNER */}
-      <div className="mb-6 p-6 bg-yellow-300 border-8 border-red-500 rounded-lg animate-pulse">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold mb-2 text-red-600">COMPLETELY NEW TEAM MEMBERS MANAGER</h2>
-            <p className="text-red-600 font-bold text-xl mb-2">
-              THIS IS A COMPLETELY NEW COMPONENT! Go to the Toiral tab to see it.
-            </p>
-            <div className="bg-black text-white p-3 rounded font-mono text-sm">
-              <p className="mb-2">If the UI doesn't work, you can use these console commands:</p>
-              <code>window.addTeamMember("Name", "Role", "ImageURL")</code><br />
-              <code>window.listTeamMembers()</code><br />
-              <code>window.removeTeamMember("id")</code>
-            </div>
-          </div>
-          <Win95Button
-            onClick={() => {
-              setActiveTab('about');
-              // Scroll to the team members section
-              setTimeout(() => {
-                window.scrollTo(0, 0);
-                const teamMembersSection = document.querySelector('.bg-red-100');
-                if (teamMembersSection) {
-                  teamMembersSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }, 100);
-            }}
-            className="px-6 py-3 bg-green-300 hover:bg-green-400 text-xl font-bold"
-          >
-            <PlusIcon className="w-6 h-6 inline-block mr-2" />
-            GO TO NEW TEAM MEMBERS MANAGER
-          </Win95Button>
-        </div>
-      </div>
+
 
 
       {/* Main tabs - First row */}
@@ -306,11 +274,11 @@ export function AdminPanel() {
           Theme
         </Win95Button>
         <Win95Button
-          className={`px-4 py-2 font-mono ${activeTab === 'pricing' ? 'border-t-gray-800 border-l-gray-800 border-b-white border-r-white' : ''}`}
-          onClick={() => setActiveTab('pricing')}
+          className={`px-4 py-2 font-mono ${activeTab === 'services' ? 'border-t-gray-800 border-l-gray-800 border-b-white border-r-white' : ''}`}
+          onClick={() => setActiveTab('services')}
         >
           <DollarSignIcon className="w-4 h-4 inline-block mr-1" />
-          Pricing
+          Services
         </Win95Button>
         <Win95Button
           className={`px-4 py-2 font-mono ${activeTab === 'contact-info' ? 'border-t-gray-800 border-l-gray-800 border-b-white border-r-white' : ''}`}
@@ -464,13 +432,9 @@ export function AdminPanel() {
               </div>
             </div>
 
-            {/* TEAM MEMBERS SECTION - COMPLETELY NEW IMPLEMENTATION */}
+            {/* TEAM MEMBERS SECTION */}
             <div className="mb-6">
-              <div className="bg-yellow-300 p-4 border-4 border-red-500 rounded-lg mb-4 animate-pulse">
-                <h3 className="text-2xl font-bold text-red-600 mb-2">TEAM MEMBERS MANAGER</h3>
-                <p className="text-red-600 font-bold">This is the new team members manager component. You should see it below.</p>
-              </div>
-              <NewTeamMembersManager />
+              <EnhancedTeamMembersManager />
             </div>
           </section>
         )}
@@ -491,16 +455,7 @@ export function AdminPanel() {
             <ContactSubmissionsManager />
           </section>}
         {activeTab === 'booking' && <section className="space-y-6">
-            <div className="bg-white p-6 border-2 border-gray-400 rounded-lg">
-              <h3 className="font-mono font-bold text-xl mb-4">Booking Management</h3>
-              <p className="mb-4">This section is currently being updated. Please check back later.</p>
-              <Win95Button
-                onClick={() => console.log('Booking test button clicked')}
-                className="px-4 py-2 font-mono"
-              >
-                Test Booking
-              </Win95Button>
-            </div>
+            <BookingManager />
           </section>}
         {activeTab === 'security' && <section className="space-y-6">
             <SecuritySettings />
@@ -514,8 +469,8 @@ export function AdminPanel() {
         {activeTab === 'contact-info' && <section className="space-y-6">
             <ContactInfoManager />
           </section>}
-        {activeTab === 'pricing' && <section className="space-y-6">
-            <PricingManager />
+        {activeTab === 'services' && <section className="space-y-6">
+            <ServicesManager />
           </section>}
         {activeTab === 'ads' && <section className="space-y-6">
             <AdManagerDashboard />

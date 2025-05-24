@@ -9,7 +9,7 @@ import { ThemeManagement } from './ThemeManagement';
 import { NotificationManager } from './NotificationManager';
 import { BookingConfirmationDialog } from './BookingConfirmationDialog';
 import { ContactInfoManager } from './ContactInfoManager';
-import { PricingManager } from './PricingManager';
+import { ServicesManager } from './ServicesManager';
 import { AdManagerDashboard } from './admin/AdManager/AdManagerDashboard';
 import { DatabaseInitializer } from './DatabaseInitializer';
 import { AnalyticsDashboard } from './admin/AnalyticsDashboard';
@@ -433,11 +433,11 @@ export function AdminPanel() {
           id: 'theme',
           label: 'Theme'
         }, {
-          id: 'pricing',
+          id: 'services',
           label: (
             <div className="flex items-center">
               <DollarSignIcon className="w-4 h-4 mr-1" />
-              Pricing
+              Services
             </div>
           )
         }, {
@@ -923,8 +923,8 @@ export function AdminPanel() {
           <ThemeManagement />
         )}
 
-        {activeTab === 'pricing' && (
-          <PricingManager />
+        {activeTab === 'services' && (
+          <ServicesManager />
         )}
 
         {activeTab === 'contact-info' && (

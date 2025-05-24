@@ -4,12 +4,13 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ContentProvider } from './contexts/ContentContext';
 import { TourProvider } from './contexts/TourContext';
-import { LoadingScreen } from './components/LoadingScreen';
+import { SimplifiedLoadingScreen } from './components/SimplifiedLoadingScreen';
 import { useAuth } from './contexts/AuthContext';
 import { useContent } from './contexts/ContentContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { onForegroundMessage, displayNotification } from './firebase/fcmInit';
+// import { onForegroundMessage, displayNotification } from './firebase/fcmInit'; // Temporarily disabled
 import { AdManager } from './components/ads/AdManager';
+import { PerformanceMonitor } from './components/PerformanceMonitor';
 import { ResourceHints } from './components/ResourceHints';
 import { ScriptManager } from './components/ScriptManager';
 import { ImagePreloader } from './components/ImagePreloader';
@@ -64,7 +65,8 @@ function ProtectedRoute({
   // Allow access if user is authenticated as admin via password, via email, or is a moderator
   return (isAdminAuthenticated || isAdminUser || isModeratorUser) ? children : <Navigate to="/not-found" replace />;
 }
-// FCM message handler component
+// FCM message handler component - temporarily disabled to fix JS errors
+/*
 function FCMHandler() {
   useEffect(() => {
     // Only set up FCM if we're in a browser environment
@@ -99,6 +101,7 @@ function FCMHandler() {
 
   return null; // This component doesn't render anything
 }
+*/
 
 export function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -258,11 +261,17 @@ export function App() {
               {/* Optimized third-party script loading */}
               <ScriptManager visibilityTarget="root" />
 
-              {/* FCM Handler for notifications - only in production */}
-              {process.env.NODE_ENV === 'production' && <FCMHandler />}
+              {/* FCM Handler for notifications - temporarily disabled to fix JS errors */}
+              {/* {process.env.NODE_ENV === 'production' && <FCMHandler />} */}
+
+              {/* Performance Monitor - enabled in development and for admins */}
+              <PerformanceMonitor
+                enabled={process.env.NODE_ENV === 'development' || window.location.search.includes('debug=true')}
+                showOverlay={false}
+              />
 
               {isLoading ? (
-                <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
+                <SimplifiedLoadingScreen onLoadingComplete={() => setIsLoading(false)} />
               ) : (
                 <BrowserRouter>
                   <AppContent />

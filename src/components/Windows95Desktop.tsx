@@ -22,6 +22,7 @@ const GameWindow = lazy(() => import('./GameWindow').then(module => ({ default: 
 const UserProfile = lazy(() => import('./UserProfile').then(module => ({ default: module.UserProfile })));
 const FirebaseAuthDiagnostic = lazy(() => import('./FirebaseAuthDiagnostic').then(module => ({ default: module.FirebaseAuthDiagnostic })));
 const PricingSection = lazy(() => import('./PricingSection').then(module => ({ default: module.PricingSection })));
+const ServicesDisplay = lazy(() => import('./ServicesDisplay').then(module => ({ default: module.ServicesDisplay })));
 const PortfolioDisplay = lazy(() => import('./PortfolioDisplay'));
 const GamesSection = lazy(() => import('./GamesSection').then(module => ({ default: module.GamesSection })));
 const CommunityForum = lazy(() => import('./community/CommunityForum').then(module => ({ default: module.CommunityForum })));
@@ -539,6 +540,15 @@ export function Windows95Desktop() {
         );
         break;
 
+      case 'services':
+        title = 'Our Services';
+        newDialogContent = (
+          <Suspense fallback={<DialogLoadingFallback />}>
+            <ServicesDisplay />
+          </Suspense>
+        );
+        break;
+
       case 'pricing':
         title = 'Pricing';
         newDialogContent = (
@@ -672,7 +682,7 @@ export function Windows95Desktop() {
         onReviewsClick={() => handleIconClick('reviews')}
         onContactClick={() => handleIconClick('contact')}
         onUserProfileClick={() => handleIconClick('userProfile')}
-        onPricingClick={() => handleIconClick('pricing')}
+        onServicesClick={() => handleIconClick('services')}
         onGamesClick={() => handleIconClick('games')}
         onCommunityClick={() => handleIconClick('community')}
         onSignInClick={() => handleIconClick('signIn')}

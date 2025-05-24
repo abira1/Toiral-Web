@@ -11,7 +11,7 @@ interface TaskbarProps {
   onContactClick: () => void;
   onDatabaseClick: () => void;
   onUserProfileClick: () => void;
-  onPricingClick: () => void;
+  onServicesClick: () => void;
   onGamesClick?: () => void;
   onCommunityClick?: () => void;
   onSignInClick?: () => void;
@@ -26,7 +26,7 @@ export function Taskbar({
   onContactClick,
   onDatabaseClick,
   onUserProfileClick,
-  onPricingClick,
+  onServicesClick,
   onGamesClick,
   onCommunityClick,
   onSignInClick,
@@ -79,7 +79,7 @@ export function Taskbar({
             onReviewsClick={onReviewsClick}
             onContactClick={onContactClick}
             onUserProfileClick={onUserProfileClick}
-            onPricingClick={onPricingClick}
+            onServicesClick={onServicesClick}
             onGamesClick={onGamesClick}
             onCommunityClick={onCommunityClick}
             onSignInClick={onSignInClick}

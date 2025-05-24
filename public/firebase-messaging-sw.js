@@ -1,5 +1,5 @@
 // Firebase Cloud Messaging Service Worker
-// Generated at: 2025-05-22T18:20:15.648Z
+// Generated at: 2025-05-24T20:05:46.830Z
 
 // Import and configure the Firebase SDK
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');

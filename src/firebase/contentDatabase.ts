@@ -168,9 +168,16 @@ export const addReview = async (reviewData: Omit<Review, 'id' | 'approved' | 'da
 }) => {
   try {
     const reviewId = uuidv4();
+    // Extract only the fields that belong to Review interface
     const newReview: Review = {
-      ...reviewData,
       id: reviewId,
+      name: reviewData.name,
+      rating: reviewData.rating,
+      review: reviewData.review,
+      company: reviewData.company,
+      avatar: reviewData.avatar,
+      featured: reviewData.featured,
+      position: reviewData.position,
       approved: false,
       date: new Date().toISOString()
     };
@@ -906,9 +913,13 @@ export const addContactSubmission = async (contactData: {
 }) => {
   try {
     const contactId = uuidv4();
+    // Extract only the fields that belong to ContactFormSubmission
     const newContact: ContactFormSubmission = {
-      ...contactData,
       id: contactId,
+      name: contactData.name,
+      email: contactData.email,
+      subject: contactData.subject,
+      message: contactData.message,
       status: 'new',
       submittedAt: new Date().toISOString()
     };

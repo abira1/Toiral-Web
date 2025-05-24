@@ -119,6 +119,52 @@
     width: 100%;
   }
 
+  /* Mobile-specific portfolio image standardization */
+  .portfolio-image-container {
+    min-height: 180px; /* Slightly smaller on mobile for better proportion */
+  }
+
+  .portfolio-image-standardized {
+    /* Ensure smooth performance on mobile */
+    transform: translateZ(0); /* Enable hardware acceleration */
+    backface-visibility: hidden;
+  }
+
+  /* Reduce hover effects on mobile for better performance */
+  .portfolio-image-standardized:hover {
+    transform: none; /* Disable scale on mobile hover */
+  }
+
+  /* Mobile-specific admin portfolio manager adjustments */
+  .portfolio-manager-mobile {
+    /* Stack form fields vertically on mobile */
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Adjust portfolio manager layout for mobile */
+  .portfolio-manager-item {
+    /* Ensure single column layout on mobile */
+    flex-direction: column !important;
+  }
+
+  .portfolio-manager-item .lg\:w-1\/3,
+  .portfolio-manager-item .lg\:w-2\/3 {
+    width: 100% !important;
+  }
+
+  /* Improve touch targets for portfolio manager buttons */
+  .portfolio-manager-buttons button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px;
+  }
+
+  /* Adjust drag handle size for mobile */
+  .portfolio-drag-handle {
+    width: 24px;
+    height: 24px;
+  }
+
   /* Adjust contact form */
   .contact-form {
     padding: 16px;

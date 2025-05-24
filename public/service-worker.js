@@ -16,7 +16,7 @@ const STATIC_ASSETS = [
   'https://i.postimg.cc/W3N3LNnd/Appoinment.png',
   'https://i.postimg.cc/cLf4vgkK/Review.png',
   'https://i.postimg.cc/RCb0yzn0/Contact.png',
-  'https://i.postimg.cc/Kz9zZLJV/dollar-sign.png',
+  'https://i.postimg.cc/wTC4SC9S/e11d1a19-062b-4b8b-b88a-42e855baa176-removebg-preview.png',
   'https://i.postimg.cc/7hbZhKjD/Chat.png'
 ];
 

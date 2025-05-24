@@ -47,7 +47,7 @@ interface ContentContextType {
   updateReview: (id: string, approved: boolean) => void;
   removeReview: (id: string) => void;
   updateContactInfo: (info: Partial<ContactInfo>) => void;
-  updateServices: (services: ServiceType[]) => void;
+  updateServiceTypes: (serviceTypes: ServiceType[]) => void;
   addBooking: (booking: Omit<BookingSubmission, 'id' | 'status' | 'submittedAt'>) => void;
   updateBookingStatus: (id: string, status: BookingSubmission['status']) => void;
   removeBooking: (id: string) => void;
@@ -107,7 +107,7 @@ const defaultContent: ContentSettingsType = {
       instagram: 'https://www.instagram.com/toiral.offical'
     }
   },
-  services: [{
+  serviceTypes: [{
     id: '1',
     name: 'Initial Consultation',
     duration: '30 mins',
@@ -130,7 +130,36 @@ const defaultContent: ContentSettingsType = {
   chatMessages: [],
   notifications: {},
   conversations: {},
-  pricing: {
+  services: {
+    categories: [
+      {
+        id: 'web-development',
+        name: 'Web Design & Development',
+        description: 'Custom websites, e-commerce platforms, and web applications with modern design and functionality.',
+        icon: 'code',
+        order: 1,
+        visible: true,
+        color: '#3B82F6'
+      },
+      {
+        id: 'graphic-design',
+        name: 'Graphic Design & Branding',
+        description: 'Logo design, brand identity, marketing materials, and visual communication solutions.',
+        icon: 'palette',
+        order: 2,
+        visible: true,
+        color: '#EF4444'
+      },
+      {
+        id: 'ui-ux-design',
+        name: 'UI/UX & Digital Product Design',
+        description: 'User interface design, user experience optimization, and digital product development.',
+        icon: 'smartphone',
+        order: 3,
+        visible: true,
+        color: '#10B981'
+      }
+    ],
     packages: [
       {
         id: 'basic',
@@ -148,7 +177,8 @@ const defaultContent: ContentSettingsType = {
         popular: false,
         visible: true,
         order: 1,
-        icon: 'rocket'
+        icon: 'rocket',
+        categoryId: 'web-development'
       },
       {
         id: 'standard',
@@ -166,7 +196,8 @@ const defaultContent: ContentSettingsType = {
         popular: true,
         visible: true,
         order: 2,
-        icon: 'star'
+        icon: 'star',
+        categoryId: 'web-development'
       },
       {
         id: 'premium',
@@ -184,7 +215,8 @@ const defaultContent: ContentSettingsType = {
         popular: false,
         visible: true,
         order: 3,
-        icon: 'diamond'
+        icon: 'diamond',
+        categoryId: 'web-development'
       }
     ],
     addons: [
@@ -218,9 +250,38 @@ const defaultContent: ContentSettingsType = {
       }
     ],
     currency: '$',
+    showServices: true,
+    title: 'Our Services',
+    subtitle: 'Comprehensive digital solutions for your business needs'
+  },
+  // Legacy pricing structure for backward compatibility
+  pricing: {
+    packages: [
+      {
+        id: 'basic',
+        name: 'Basic Package',
+        tagline: 'Start Strong',
+        description: 'Perfect for small businesses looking to establish an online presence.',
+        price: 499,
+        features: [
+          'Custom-designed single-page website',
+          'Mobile & desktop responsiveness',
+          'Menu, About, Gallery sections',
+          'Reviews and Contact sections',
+          'Basic SEO setup'
+        ],
+        popular: false,
+        visible: true,
+        order: 1,
+        icon: 'rocket',
+        categoryId: 'web-development'
+      }
+    ],
+    addons: [],
+    currency: '$',
     showPricing: true,
-    title: 'Our Pricing Plans',
-    subtitle: 'Choose the perfect package for your business needs'
+    title: 'Our Services',
+    subtitle: 'Comprehensive digital solutions for your business needs'
   },
   // Add missing required properties
   toiral: {},
@@ -842,20 +903,20 @@ export function ContentProvider({
         alert('Failed to update contact info in Firebase. Please try again.');
       }
     },
-    updateServices: async (services: ServiceType[]) => {
+    updateServiceTypes: async (serviceTypes: ServiceType[]) => {
       try {
         // Update local state first for immediate UI feedback
         setContent(prev => ({
           ...prev,
-          services
+          serviceTypes
         }));
 
         // Then update Firebase
-        await set(ref(database, 'services'), services);
-        console.log('Updated services in Firebase');
+        await set(ref(database, 'serviceTypes'), serviceTypes);
+        console.log('Updated service types in Firebase');
       } catch (error) {
-        console.error('Error updating services in Firebase:', error);
-        alert('Failed to update services in Firebase. Please try again.');
+        console.error('Error updating service types in Firebase:', error);
+        alert('Failed to update service types in Firebase. Please try again.');
       }
     },
     addBooking: async (bookingData: Omit<BookingSubmission, 'id' | 'status' | 'submittedAt'>) => {

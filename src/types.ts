@@ -61,16 +61,28 @@ export interface ContactInfo {
   } | SocialMediaLink[];
 }
 
-// Pricing Information
-export interface PricingAddon {
+// Services Information (formerly Pricing)
+export interface ServiceCategory {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  image?: string; // Optional category image URL
+  order: number;
+  visible: boolean;
+  color?: string;
+}
+
+export interface ServiceAddon {
   id: string;
   name: string;
   description?: string;
   price: number;
   visible: boolean;
+  categoryId?: string;
 }
 
-export interface PricingPackage {
+export interface ServicePackage {
   id: string;
   name: string;
   tagline: string;
@@ -81,15 +93,29 @@ export interface PricingPackage {
   visible: boolean;
   order: number;
   icon?: string;
+  categoryId: string;
+  duration?: string; // e.g., "one-time", "monthly", "yearly"
+  deliveryTime?: string; // e.g., "1-2 weeks", "3-5 days"
 }
 
-export interface PricingSettings {
-  packages: PricingPackage[];
-  addons: PricingAddon[];
+export interface ServicesSettings {
+  categories: ServiceCategory[];
+  packages: ServicePackage[];
+  addons: ServiceAddon[];
   currency: string;
-  showPricing: boolean;
+  showServices: boolean;
   title: string;
   subtitle?: string;
+}
+
+// Legacy interfaces for backward compatibility
+export interface PricingAddon extends ServiceAddon {}
+export interface PricingPackage extends Omit<ServicePackage, 'categoryId'> {
+  categoryId?: string;
+}
+export interface PricingSettings extends Omit<ServicesSettings, 'categories' | 'showServices'> {
+  categories?: ServiceCategory[];
+  showPricing: boolean;
 }
 
 // Service Type
@@ -381,7 +407,7 @@ export interface ContentSettings {
   portfolio: PortfolioItem[];
   reviews: Review[];
   contact: ContactInfo;
-  services: ServiceType[];
+  serviceTypes: ServiceType[];
   availableHours: number[];
   bookings: BookingSubmission[];
   contactSubmissions: ContactFormSubmission[];
@@ -391,7 +417,8 @@ export interface ContentSettings {
   conversations: {
     [key: string]: ChatConversation;
   };
-  pricing: PricingSettings;
+  services: ServicesSettings;
+  pricing: PricingSettings; // Legacy support
   games: GamesSettings;
   testimonialSettings?: TestimonialSettings;
   analytics?: AnalyticsData;
